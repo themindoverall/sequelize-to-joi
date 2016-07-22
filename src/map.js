@@ -51,35 +51,37 @@ function mapValidator(joi, validator, key) {
         case 'isIPv4':
             return joi.ip({ version: ['ipv4'] });
         case 'isIPv6':
-            return joi.ip({ version: ['ipv6'] });
+            return joi = joi.ip({ version: ['ipv6'] });
         case 'min':
-            return joi.minimum(validator);
+            return  joi.minimum(validator);
         case 'max':
-            return joi.maximum(validator);
+            return  joi.maximum(validator);
     }
 }
 
 export default function (attribute) {
-    if (!attribute || !attribute.key) {
+    if (!_.get(attribute, 'type.key')) {
         return;
     }
 
-    let joi = mapKey(attribute.key, attribute);
+    let joi = mapKey(attribute.type.key, attribute);
 
     // Add model comments to schema description
     if (attribute.comment) {
-        joi.description(attribute.comment);
+        joi = joi.description(attribute.comment);
     }
 
     if (attribute.allowNull === false) {
-        joi.required();
+        joi = joi.required();
     }
 
     if (attribute.defaultValue && !_.isObject(attribute.defaultValue) && !_.isFunction(attribute.defaultValue)) {
-        joi.default(attribute.defaultValue);
+        joi = joi.default(attribute.defaultValue);
     }
 
-    _.each(attribute.validate, mapValidator.bind(null, joi));
+    _.each(attribute.validate, (validator, key) => {
+        joi = mapValidator(joi, validator, key);
+    });
 
     return joi;
 }

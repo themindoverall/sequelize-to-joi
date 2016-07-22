@@ -1,9 +1,10 @@
 import { expect } from 'chai';
 import Sequelize  from 'sequelize';
+import Joi        from 'joi';
 
 import sequelizeToJoi from '../src';
 
-describe('middleware/joi', () => {
+describe('sequelize-to-joi', () => {
     let sequelize;
 
     before(() => {
@@ -30,5 +31,24 @@ describe('middleware/joi', () => {
         expect(sequelizeToJoi).to.throw(TypeError);
     });
 
+    it('should validate Basic model', () => {
+        let schema = sequelizeToJoi(sequelize.models.Basic);
+        let test = {
+            id: 1,
+            name: 'test',
+            email: 'a@b.co',
+            count: 10,
+            createdAt: (new Date()).toISOString(),
+            updatedAt: (new Date()).toISOString()
+        };
 
+        let result1 = Joi.validate(test, schema);
+        expect(result1.error).to.not.exist;
+        expect(result1.value).to.contain.all.keys(test);
+
+        test.email = 'invalid';
+        let result2 = Joi.validate(test, schema);
+        expect(result2.error).to.exist;
+        expect(result2.error.message).to.contain('email');
+    });
 });
