@@ -16,7 +16,7 @@
     "url": "git+https://github.com/RevoltTV/sequelize-to-joi.git"
   },
   "author": "REVOLT TV <digital.engineering@revolt.tv>",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/RevoltTV/sequelize-to-joi/issues"
   },
