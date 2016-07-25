@@ -1,7 +1,7 @@
 import _   from 'lodash';
 import Joi from 'joi';
 
-function mapKey(key, attribute) {
+function mapType(key, attribute) {
     switch (key) {
         // NUMBER TYPES
         case 'BIGINT':
@@ -64,7 +64,7 @@ export default function (attribute) {
         return;
     }
 
-    let joi = mapKey(attribute.type.key, attribute);
+    let joi = mapType(attribute.type.key, attribute);
 
     // Add model comments to schema description
     if (attribute.comment) {

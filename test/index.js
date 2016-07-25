@@ -10,7 +10,7 @@ describe('sequelize-to-joi', () => {
     before(() => {
         sequelize = new Sequelize('test', '', null, { dialect: 'sqlite' });
 
-        sequelize.define('Basic', {
+        let Basic = sequelize.define('Basic', {
             name: Sequelize.STRING,
             email: {
                 type: Sequelize.STRING,
@@ -21,6 +21,12 @@ describe('sequelize-to-joi', () => {
             },
             count: Sequelize.INTEGER
         });
+
+        let References = sequelize.define('Reference', {
+            total: Sequelize.INTEGER
+        });
+
+        References.belongsTo(Basic);
     });
 
     it('should exist and be a function', () => {
@@ -66,5 +72,29 @@ describe('sequelize-to-joi', () => {
         let result = Joi.validate(test, schema);
         expect(result.error).to.not.exist;
         expect(result.value).to.deep.equal(test);
+    });
+
+    it('should handle referenced models', () => {
+        let schema = sequelizeToJoi(sequelize.models.Reference);
+
+        let test = {
+            id: 2,
+            total: 10,
+            BasicId: 1,
+            Basic: {
+                id: 1,
+                name: 'valid',
+                email: 'a@b.co',
+                count: 5,
+                createdAt: (new Date()).toISOString(),
+                updatedAt: (new Date()).toISOString()
+            },
+            createdAt: (new Date()).toISOString(),
+            updatedAt: (new Date()).toISOString()
+        };
+
+        let result = Joi.validate(test, schema);
+        expect(result.error).to.not.exist;
+        expect(result.value).to.deep.contain.all.keys(test);
     });
 });
