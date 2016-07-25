@@ -33,11 +33,14 @@ function mapType(key, attribute) {
         case 'JSON':
         case 'JSONB':
             return Joi.object();
+
+        default:
+            return Joi.any();
     }
 }
 
 function mapValidator(joi, validator, key) {
-    if (validator === false) { return; }
+    if (validator === false) { return joi; }
 
     switch (key) {
         case 'is':
@@ -53,18 +56,18 @@ function mapValidator(joi, validator, key) {
         case 'isIPv6':
             return joi = joi.ip({ version: ['ipv6'] });
         case 'min':
-            return  joi.minimum(validator);
+            return joi.min(validator);
         case 'max':
-            return  joi.maximum(validator);
+            return joi.max(validator);
+        case 'notEmpty':
+            return joi.min(1);
+        default:
+            return joi;
     }
 }
 
 export default function (attribute) {
-    if (!_.get(attribute, 'type.key')) {
-        return;
-    }
-
-    let joi = mapType(attribute.type.key, attribute);
+    let joi = mapType(_.get(attribute, 'type.key', ''), attribute);
 
     // Add model comments to schema description
     if (attribute.comment) {
