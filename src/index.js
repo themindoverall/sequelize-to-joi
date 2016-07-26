@@ -8,6 +8,8 @@ export function findAndConvertModels(object, options) {
     _.forIn(object, (value, key) => {
         if (value instanceof Sequelize.Model) {
             object[key] = sequelizeToJoi(value, options);
+        } else if (_.isArray(value) && _.first(value) instanceof Sequelize.Model) {
+            object[key] = Joi.array().items(sequelizeToJoi(_.first(value), options));
         } else if (_.isObject(value)) {
             object[key] = findAndConvertModels(value, options);
         }
