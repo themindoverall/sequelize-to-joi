@@ -76,6 +76,8 @@ export default function (attribute) {
 
     if (attribute.allowNull === false) {
         joi = joi.required();
+    } else {
+        joi = joi.allow(null);
     }
 
     if (attribute.defaultValue && !_.isObject(attribute.defaultValue) && !_.isFunction(attribute.defaultValue)) {
