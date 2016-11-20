@@ -1,5 +1,33 @@
-import _   from 'lodash';
-import Joi from 'joi';
+'use strict';
+const _   = require('lodash');
+const Joi = require('joi');
+
+const VALID_GEOJSON_TYPES = ['Point', 'Linestring', 'Polygon','MultiPoint','MultiLineString','MultiPolygon','GeometryCollection','FeatureCollection','Feature'];
+
+function createGeoJSONValidator() {
+    let geojsonBasic = Joi.object({
+        type: Joi.string().valid(VALID_GEOJSON_TYPES).insensitive(),
+        coordinates: Joi.array().sparse(),
+        bbox: Joi.array().sparse(),
+        properties: Joi.object(),
+        crs: Joi.object({
+            type: Joi.string().valid('name','link').insensitive().required(),
+            properties: Joi.object().required(),
+        }),
+    });
+    //set child keys to original joi object
+    geojsonBasic = geojsonBasic.keys({
+        geometry: geojsonBasic,
+        geometries: Joi.array().items(geojsonBasic).sparse(),
+        features: Joi.array().items(geojsonBasic).sparse(),
+    });
+    //add new and improved geojson object to the object again so that the structure is circular 
+    return geojsonBasic.keys({
+        geometry: geojsonBasic,
+        geometries: Joi.array().items(geojsonBasic).sparse(),
+        features: Joi.array().items(geojsonBasic).sparse(),
+    });
+};
 
 function mapType(key, attribute) {
     switch (key) {
@@ -11,15 +39,15 @@ function mapType(key, attribute) {
         case 'DECIMAL':
         case 'DOUBLE':
         case 'FLOAT':
-            return Joi.number();
+        case 'REAL':
+            return attribute.precision ? Joi.number().precision(attribute.precision) : Joi.number();
 
         // STRING TYPES
         case 'STRING':
         case 'TEXT':
             return Joi.string();
-       case 'UUID':
+        case 'UUID':
             return Joi.string().guid();
-            
         case 'ENUM':
             return Joi.string().allow(attribute.values);
 
@@ -32,12 +60,13 @@ function mapType(key, attribute) {
             return Joi.any();
         case 'BOOLEAN':
             return Joi.boolean();
-        case 'ARRAY':
-            return Joi.array().sparse();
         case 'JSON':
         case 'JSONB':
             return Joi.object();
-
+        case 'ARRAY':
+            return Joi.array().sparse();
+        case 'GEOMETRY': 
+            return createGeoJSONValidator();
         default:
             return Joi.any();
     }
@@ -70,7 +99,7 @@ function mapValidator(joi, validator, key) {
     }
 }
 
-export default function (attribute) {
+module.exports = function (attribute) {
     let joi = mapType(_.get(attribute, 'type.key', ''), attribute);
 
     // Add model comments to schema description
@@ -93,4 +122,4 @@ export default function (attribute) {
     });
 
     return joi;
-}
+};
