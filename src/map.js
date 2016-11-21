@@ -32,7 +32,7 @@ function mapType(key, attribute) {
         case 'BOOLEAN':
             return Joi.boolean();
         case 'ARRAY':
-            return Joi.array().sparse();
+            return Joi.array().sparse().items(mapType(_.get(attribute, 'type.type.key', ''), attribute.type));
         case 'JSON':
         case 'JSONB':
             return Joi.object();
