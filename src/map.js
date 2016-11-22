@@ -1,8 +1,17 @@
-'use strict';
-const _   = require('lodash');
-const Joi = require('joi');
+import _         from 'lodash';
+import Joi        from 'joi';
 
-const VALID_GEOJSON_TYPES = ['Point', 'Linestring', 'Polygon','MultiPoint','MultiLineString','MultiPolygon','GeometryCollection','FeatureCollection','Feature'];
+const VALID_GEOJSON_TYPES = [
+    'Point', 
+    'Linestring', 
+    'Polygon',
+    'MultiPoint',
+    'MultiLineString',
+    'MultiPolygon',
+    'GeometryCollection',
+    'FeatureCollection',
+    'Feature'
+];
 
 function createGeoJSONValidator() {
     let geojsonBasic = Joi.object({
@@ -12,8 +21,8 @@ function createGeoJSONValidator() {
         properties: Joi.object(),
         crs: Joi.object({
             type: Joi.string().valid('name','link').insensitive().required(),
-            properties: Joi.object().required(),
-        }),
+            properties: Joi.object().required()
+        })
     });
     //set child keys to original joi object
     geojsonBasic = geojsonBasic.keys({
@@ -31,12 +40,16 @@ function createGeoJSONValidator() {
 
 function createNonIntegerValidator(attr) {
     let j = Joi.number();
-    if (!attr.type) return j;
+    if (!attr.type) {
+        return j;
+    }
     if (attr.type._length) {
-        let bound = Math.pow(10,attr.type._length);
+        let bound = Math.pow(10, attr.type._length);
         j = j.less(bound).greater(-1 * bound);
     }
-    if (attr.type._decimals) j = j.precision(attr.type._decimals).strict();
+    if (attr.type._decimals) {
+        j = j.precision(attr.type._decimals).strict();
+    }
     return j;
 }
 
@@ -110,10 +123,10 @@ function mapValidator(joi, validator, key) {
     }
 }
 
-module.exports = function (attribute) {
+export default function (attribute) {
     //allow user to personally set joi objects in models, mainly for JSON/B data types
-    if (attribute.sequelize_to_joi_override) {
-        return attribute.sequelize_to_joi_override;
+    if (attribute.sequelizeToJoiOverride) {
+        return attribute.sequelizeToJoiOverride;
     }
 
     let joi = mapType(_.get(attribute, 'type.key', ''), attribute);
@@ -138,4 +151,4 @@ module.exports = function (attribute) {
     });
 
     return joi;
-};
+}

@@ -1,4 +1,3 @@
-'use strict';
 import { expect } from 'chai';
 import Sequelize  from 'sequelize';
 import Joi        from 'joi';
@@ -35,7 +34,7 @@ describe('sequelize-to-joi', () => {
             cash: Sequelize.FLOAT(2,4),
             settings: {
                 type: Sequelize.JSONB,
-                sequelize_to_joi_override: Joi.object({
+                sequelizeToJoiOverride: Joi.object({
                     flag: Joi.string().valid('white','red','blue'),
                 }),
             },
@@ -179,32 +178,31 @@ describe('sequelize-to-joi', () => {
                     "type": "Feature",
                     "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
                     "properties": {"prop0": "value0"}
-                },{ 
+                }, { 
                     "type": "Feature",
                     "geometry": {
-                      "type": "LineString",
-                      "coordinates": [
-                        [102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]
-                        ]
-                      },
+                        "type": "LineString",
+                        "coordinates": [100.0, 1.0],
+
+                    },
                     "properties": {
-                      "prop0": "value0",
-                      "prop1": 0.0
-                      }
-                    },{ 
-                    "type": "Feature",
-                    "geometry": {
-                       "type": "Polygon",
-                       "coordinates": [
-                         [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
-                           [100.0, 1.0], [100.0, 0.0] ]
-                         ]
-                     },
-                     "properties": {
-                       "prop0": "value0",
-                       "prop1": {"this": "that"}
-                       }
-                     }
+                        "prop0": "value0",
+                        "prop1": 0.0
+                    }
+                    }, { 
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
+                                [100.0, 1.0], [100.0, 0.0] ]
+                            ]
+                        },
+                        "properties": {
+                            "prop0": "value0",
+                            "prop1": {"this": "that"}
+                        }
+                    }
                 ]
             }
         };
@@ -224,32 +222,32 @@ describe('sequelize-to-joi', () => {
                     "type": "Feature",
                     "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
                     "properties": {"prop0": "value0"}
-                },{ 
+                }, { 
                     "type": "Feature",
                     "geometry": {
-                      "type": "LineString",
-                      //coordinates should be an array
-                      "coordinates": 1,
+                        "type": "LineString",
+                        //coordinates should be an array
+                        "coordinates": 1,
 
-                      },
+                    },
                     "properties": {
-                      "prop0": "value0",
-                      "prop1": 0.0
-                      }
-                    },{ 
-                    "type": "Feature",
-                    "geometry": {
-                       "type": "Polygon",
-                       "coordinates": [
-                         [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
-                           [100.0, 1.0], [100.0, 0.0] ]
-                         ]
-                     },
-                     "properties": {
-                       "prop0": "value0",
-                       "prop1": {"this": "that"}
-                       }
-                     }
+                        "prop0": "value0",
+                        "prop1": 0.0
+                    }
+                    }, { 
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
+                                [100.0, 1.0], [100.0, 0.0] ]
+                            ]
+                        },
+                        "properties": {
+                            "prop0": "value0",
+                            "prop1": {"this": "that"}
+                        }
+                    }
                 ]
             }
         };
