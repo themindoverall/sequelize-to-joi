@@ -1,5 +1,57 @@
-import _   from 'lodash';
-import Joi from 'joi';
+import _         from 'lodash';
+import Joi        from 'joi';
+
+const VALID_GEOJSON_TYPES = [
+    'Point', 
+    'Linestring', 
+    'Polygon',
+    'MultiPoint',
+    'MultiLineString',
+    'MultiPolygon',
+    'GeometryCollection',
+    'FeatureCollection',
+    'Feature'
+];
+
+function createGeoJSONValidator() {
+    let geojsonBasic = Joi.object({
+        type: Joi.string().valid(VALID_GEOJSON_TYPES).insensitive(),
+        coordinates: Joi.array().sparse(),
+        bbox: Joi.array().sparse(),
+        properties: Joi.object(),
+        crs: Joi.object({
+            type: Joi.string().valid('name','link').insensitive().required(),
+            properties: Joi.object().required()
+        })
+    });
+    //set child keys to original joi object
+    geojsonBasic = geojsonBasic.keys({
+        geometry: geojsonBasic,
+        geometries: Joi.array().items(geojsonBasic).sparse(),
+        features: Joi.array().items(geojsonBasic).sparse(),
+    });
+    //add new and improved geojson object to the object again so that the structure is circular 
+    return geojsonBasic.keys({
+        geometry: geojsonBasic,
+        geometries: Joi.array().items(geojsonBasic).sparse(),
+        features: Joi.array().items(geojsonBasic).sparse(),
+    });
+}
+
+function createNonIntegerValidator(attr) {
+    let j = Joi.number();
+    if (!attr.type) {
+        return j;
+    }
+    if (attr.type._length) {
+        let bound = Math.pow(10, attr.type._length);
+        j = j.less(bound).greater(-1 * bound);
+    }
+    if (attr.type._decimals) {
+        j = j.precision(attr.type._decimals).strict();
+    }
+    return j;
+}
 
 function mapType(key, attribute) {
     switch (key) {
@@ -11,7 +63,8 @@ function mapType(key, attribute) {
         case 'DECIMAL':
         case 'DOUBLE':
         case 'FLOAT':
-            return Joi.number();
+        case 'REAL':
+            return createNonIntegerValidator(attribute);
 
         // STRING TYPES
         case 'STRING':
@@ -31,12 +84,13 @@ function mapType(key, attribute) {
             return Joi.any();
         case 'BOOLEAN':
             return Joi.boolean();
-        case 'ARRAY':
-            return Joi.array().sparse();
         case 'JSON':
         case 'JSONB':
-            return Joi.object();
-
+            return Joi.alternatives().try(Joi.array(), Joi.object());
+        case 'ARRAY':
+            return Joi.array().sparse();
+        case 'GEOMETRY': 
+            return createGeoJSONValidator();
         default:
             return Joi.any();
     }
@@ -70,6 +124,11 @@ function mapValidator(joi, validator, key) {
 }
 
 export default function (attribute) {
+    //allow user to personally set joi objects in models, mainly for JSON/B data types
+    if (attribute.sequelizeToJoiOverride) {
+        return attribute.sequelizeToJoiOverride;
+    }
+
     let joi = mapType(_.get(attribute, 'type.key', ''), attribute);
 
     // Add model comments to schema description
