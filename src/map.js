@@ -142,7 +142,7 @@ export default function (attribute) {
         joi = joi.allow(null);
     }
 
-    if (typeof attribute.defaultValue !== 'undefined' && !_lodash2.default.isObject(attribute.defaultValue) && !_lodash2.default.isFunction(attribute.defaultValue)) {
+    if (typeof attribute.defaultValue !== 'undefined' && !_.isObject(attribute.defaultValue) && !_.isFunction(attribute.defaultValue)) {
         joi = joi.optional().default(attribute.defaultValue);
     }
 
