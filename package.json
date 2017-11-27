@@ -1,6 +1,6 @@
 {
   "name": "@revolttv/sequelize-to-joi",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Converts a sequelize Model schema to a Joi validator",
   "main": "lib/index.js",
   "jsnext:main": "src/index",
