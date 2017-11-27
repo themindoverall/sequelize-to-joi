@@ -142,8 +142,8 @@ export default function (attribute) {
         joi = joi.allow(null);
     }
 
-    if (attribute.defaultValue && !_.isObject(attribute.defaultValue) && !_.isFunction(attribute.defaultValue)) {
-        joi = joi.default(attribute.defaultValue);
+    if (typeof attribute.defaultValue !== 'undefined' && !_.isObject(attribute.defaultValue) && !_.isFunction(attribute.defaultValue)) {
+        joi = joi.optional().default(attribute.defaultValue);
     }
 
     _.each(attribute.validate, (validator, key) => {
