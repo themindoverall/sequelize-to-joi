@@ -1,5 +1,7 @@
 # Sequelize to Joi
 
+forked from @revolttv/sequelize-to-joi
+
 Takes a Sequelize model and constructs a Joi validator from it
 
 ## Usage

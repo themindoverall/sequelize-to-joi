@@ -1,64 +1,34 @@
 {
   "name": "@revolttv/sequelize-to-joi",
-  "version": "2.0.2",
+  "version": "2.0.2-JSFORK",
   "description": "Converts a sequelize Model schema to a Joi validator",
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "jsnext:main": "src/index",
   "scripts": {
-    "build": "babel ./src --out-dir ./lib",
     "lint": "eslint \"./**/*.js\"",
-    "prepublish": "npm run build && npm run test",
+    "prepublish": "npm run test",
     "pretest": "npm run lint",
-    "test": "cross-env NODE_ENV=test mocha --compilers js:babel-core/register --recursive"
+    "test": "cross-env NODE_ENV=test mocha --recursive"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RevoltTV/sequelize-to-joi.git"
+    "url": "git+https://github.com/themindoverall/sequelize-to-joi.git"
   },
   "author": "REVOLT TV <digital.engineering@revolt.tv>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/RevoltTV/sequelize-to-joi/issues"
+    "url": "https://github.com/themindoverall/sequelize-to-joi/issues"
   },
-  "homepage": "https://github.com/RevoltTV/sequelize-to-joi#readme",
+  "homepage": "https://github.com/themindoverall/sequelize-to-joi#readme",
   "files": [
-    "lib",
     "src",
     "test"
   ],
-  "devDependencies": {
-    "babel-cli": "^6.10.1",
-    "babel-core": "^6.10.4",
-    "babel-eslint": "^7.1.0",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-stage-0": "^6.5.0",
-    "chai": "^3.5.0",
-    "cross-env": "^3.1.3",
-    "eslint": "^3.0.1",
-    "eslint-config-revolt": "^1.0.0",
-    "eslint-plugin-react": "^6.7.0",
-    "joi": "^10.6.0",
-    "mocha": "^3.1.2",
-    "sequelize": "4.2.0",
-    "sinon": "^1.17.4",
-    "sinon-chai": "^2.8.0",
-    "sqlite3": "^3.1.4"
-  },
   "dependencies": {
     "lodash": "^4.13.1"
   },
   "peerDependencies": {
-    "joi": "^10.6.0 || ^11.0.0 || ^12.0.0 || ^13.0.0",
-    "sequelize": "^4.2.0"
-  },
-  "babel": {
-    "presets": [
-      "es2015",
-      "stage-0"
-    ],
-    "plugins": [
-      "add-module-exports"
-    ]
+    "joi": "^10.6.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0",
+    "sequelize": "^4.2.0 || ^5.8.1"
   }
 }

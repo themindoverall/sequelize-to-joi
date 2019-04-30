@@ -1,5 +1,5 @@
-import _   from 'lodash';
-import Joi from 'joi';
+const _ = require('lodash');
+const Joi = require('joi');
 
 const VALID_GEOJSON_TYPES = [
     'Point',
@@ -123,7 +123,7 @@ function mapValidator(joi, validator, key) {
     }
 }
 
-export default function (attribute) {
+function map(attribute) {
     //allow user to personally set joi objects in models, mainly for JSON/B data types
     if (attribute.sequelizeToJoiOverride) {
         return attribute.sequelizeToJoiOverride;
@@ -152,3 +152,5 @@ export default function (attribute) {
 
     return joi;
 }
+
+exports.default = exports.map = map;
